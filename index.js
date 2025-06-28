@@ -4,7 +4,7 @@ const fs = require("fs");
 const loginUrl =
   "https://cloud.ufxtv.com/api/user/login/?user_email=BE0268&user_password=1111&kauth=";
 const playBaseUrl =
-  "https://cloud.ufxtv.com/api/tv/channels/play/?c=uflix-epl1&kauth=";
+  "https://cloud.ufxtv.com/api/tv/channels/play/?c=epl-bein1&kauth=";
 
 // Function to get playlist URL
 async function getPlaylist(user_loggedsession) {
