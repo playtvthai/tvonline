@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist</title>
+    <style>
+        .hidden-link {
+            display: none;
+        }
+        .invisible-link {
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body bgcolor="FFFFFF">
+
+<pre id="playlistOutput">กำลังโหลด playlist...</pre>
+
+<script>
+    const loginUrl = 'https://cloud.ufxtv.com/api/user/login/?user_email=BE0341&user_password=1111&kauth=';
+    const playBaseUrl = 'https://cloud.ufxtv.com/api/tv/channels/play/?c=uflix-epl1&kauth=';
+
+    async function getSession() {
+        const res = await fetch(loginUrl);
+        const text = await res.text();
+        const match = text.match(/<user_loggedsession>(.*?)<\/user_loggedsession>/);
+        return match ? match[1] : null;
+    }
+
+    async function getClearUrl(session) {
+        const url = `${playBaseUrl}&user_loggedsession=${session}`;
+        const res = await fetch(url);
+        const text = await res.text();
+        const match = text.match(/<clear_url>(.*?)<\/clear_url>/);
+        return match ? match[1] : null;
+    }
+
+    (async () => {
+        const session = await getSession();
+        if (!session) {
+            document.getElementById("playlistOutput").textContent = "❌ ไม่สามารถเข้าสู่ระบบได้";
+            return;
+        }
+
+        const clearUrl = await getClearUrl(session);
+        if (!clearUrl) {
+            document.getElementById("playlistOutput").textContent = "❌ ไม่พบลิงก์ clear_url";
+            return;
+        }
+
+        const chunksUrl = clearUrl.replace('playlist.m3u8', 'chunks.m3u8');
+
+        const m3uData = `#EXTM3U
+#EXTINF:-1 group-title="ช่องกีฬาทั่วไป" tvg-logo="https://rentapi.blackboxsys.net/images/png/epl-1.png",EPL 01
+${chunksUrl}
+`;
+
+        document.getElementById("playlistOutput").textContent = m3uData;
+    })();
+</script>
+
+#EXTM3U
+#EXTINF:-1 group-title="ช่องกีฬาทั่วไป" tvg-logo="https://rentapi.blackboxsys.net/images/png/epl-1.png",EPL 01
+https://live-la3.aws-stream.com:9317/v3/sA1kiVT99B1vjs5IjbwOXg/1744109311/076e63f673197e80a3652b5e363c3fd9/JBDUjJKBQDDWzZ5orKTIEw/1744130891/live/vx-origin/uflix-epl1_720/chunks.m3u8
+
+</body>
+</html>
