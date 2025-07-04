@@ -1,0 +1,169 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player</title>
+    <style>
+        body {
+            font-family: 'Prompt', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        video {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        h1, h2 {
+            text-align: center;
+            margin: 10px 0;
+        }
+        .loading-message {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            color: #FF5733;
+        }
+        .back-button {
+            display: inline-block;
+            padding: 15px;
+            background: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            margin: 20px auto;
+            display: block;
+        }
+        .back-button:hover {
+            background: #0056b3;
+        }
+        .realtime-info {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .quote {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #00FF00;
+        }
+        .scrolling-text {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            font-size: 20pt;
+            color: #FFD700;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .scrolling-text span {
+            display: inline-block;
+            animation: scroll 10s linear infinite;
+        }
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 id="videoTitle">คุณกำลังรับชม: </h1>
+        <h2 id="channelName">ช่อง: ชื่อช่อง</h2>
+        <div class="loading-message" id="loadingMessage">กรุณารอสักครู่</div>
+        <video id="videoPlayer" controls autoplay playsinline style="display: none;"></video>
+        <!- class="back-button">Back</a> -->
+        <div class="realtime-info">
+            <span id="currentTime">ขณะนี้ท่านกำลังรับชมรายการไปแล้ว 0:00</span>
+            <span id="currentDate"></span>
+            <div id="quote" class="quote"></div>
+        </div>
+    </div>
+    <div class="scrolling-text">
+        <span id="scrollText">สมใจ PLAYID แบบรายเดือน </span>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const title = urlParams.get('title') || 'ไม่มีข้อมูล';
+        const videoUrl = urlParams.get('url') || 'https://example.com/your-video.m3u8';
+        const referer = urlParams.get('referer');
+
+        document.getElementById('videoTitle').innerText = `คุณกำลังรับชม: ${title}`;
+        const videoElement = document.getElementById('videoPlayer');
+        const loadingMessage = document.getElementById('loadingMessage');
+
+        if (Hls.isSupported() && videoUrl.endsWith('.m3u8')) {
+            const hls = new Hls({
+                xhrSetup: (xhr) => {
+                    if (referer) {
+                        xhr.setRequestHeader("Referer", referer);
+                    }
+                }
+            });
+            hls.loadSource(videoUrl);
+            hls.attachMedia(videoElement);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                loadingMessage.style.display = 'none';
+                videoElement.style.display = 'block';
+            });
+        } else if (videoUrl.endsWith('.mpd')) {
+            const player = dashjs.MediaPlayer().create();
+            player.initialize(videoElement, videoUrl, true);
+            player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
+                loadingMessage.style.display = 'none';
+                videoElement.style.display = 'block';
+            });
+        } else {
+            videoElement.src = videoUrl;
+            videoElement.onloadedmetadata = () => {
+                loadingMessage.style.display = 'none';
+                videoElement.style.display = 'block';
+            };
+        }
+
+        const currentTimeElement = document.getElementById('currentTime');
+        videoElement.addEventListener('timeupdate', () => {
+            const minutes = Math.floor(videoElement.currentTime / 60);
+            const seconds = Math.floor(videoElement.currentTime % 60);
+            currentTimeElement.innerText = `ขณะนี้ท่านกำลังรับชม ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        });
+
+        const currentDateElement = document.getElementById('currentDate');
+        function updateDate() {
+            const now = new Date();
+            currentDateElement.innerText = `วันที่และเวลา: ${now.toLocaleString()}`;
+        }
+        setInterval(updateDate, 1000);
+        updateDate();
+
+        const quotes = [
+            "",
+            ""
+        ];
+
+        function showQuote() {
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('quote').innerText = randomQuote;
+        }
+
+        setInterval(showQuote, 5000);
+        showQuote();
+    </script>
+</body>
+</html>
