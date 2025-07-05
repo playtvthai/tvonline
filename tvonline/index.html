@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>kserietv Extractor</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #121212;
+      color: #eee;
+      margin: 0; padding: 20px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    h2, h3, h4 { color: #00bcd4; }
+    input, select, button, textarea {
+      font-size: 16px;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 6px;
+      border: none;
+    }
+    input[type="text"] { width: 70%; }
+    select { background: #333; color: #fff; }
+    button {
+      background: #00bcd4;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover { background: #0097a7; }
+    textarea {
+      width: 100%; height: 150px;
+      background: #1e1e1e; color: #00ff6e;
+      font-family: monospace;
+    }
+    .poster {
+      max-width: 100%; max-height: 300px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .btn-group button, .btn-group a {
+      margin-right: 10px; display: inline-block;
+    }
+    video {
+      width: 100%; margin-top: 10px;
+      background: black; border: 1px solid #444;
+      border-radius: 8px;
+    }
+    #progressArea {
+      margin: 10px 0;
+      font-weight: bold;
+      color: #80d8ff;
+    }
+  </style>
+</head>
+<body>
+<h1>
+  <a href="https://kserietv.co/" target="_blank" style="text-decoration:none; color:#00bcd4;">
+    📺 kserietv Extractor
+  </a>
+</h1>
+
+<a href="https://kserietv.co/" target="_blank" style="display:inline-block; padding:10px 20px; background:#00bcd4; color:white; border-radius:8px; text-decoration:none; font-weight:bold;">
+  📺 ไปยัง kserietv.co ↗
+</a>
+<form id="urlForm">
+  <input type="text" id="urlInput" placeholder="ลิงก์เช่น https://kserietv.co/..." required />
+  <select id="langSelect">
+    <option value="all">ทั้งหมด</option>
+    <option value="th">พากย์ไทย</option>
+    <option value="sub">ซับไทย</option>
+  </select>
+  <button type="submit">ดึงลิงก์</button>
+</form>
+
+<div id="progressArea"></div>
+
+<div id="resultArea" style="display:none;">
+  <h3 id="title"></h3>
+  <img id="poster" class="poster" alt="โปสเตอร์" />
+
+  <h4>.m3u Playlist</h4>
+  <textarea id="m3uText" readonly></textarea>
+
+  <div class="btn-group">
+    <button onclick="copyText('th')">📋 คัดลอก TH</button>
+    <button onclick="copyText('sub')">📋 คัดลอก Sub</button>
+    <button onclick="copyText('all')">📋 คัดลอก ทั้งหมด</button>
+    <a id="dlAll" href="#" download="playlist.m3u">⬇️ ดาวน์โหลด ทั้งหมด</a>
+    <a id="dlTH" href="#" download="playlist_th.m3u">⬇️ ดาวน์โหลด TH</a>
+    <a id="dlSub" href="#" download="playlist_sub.m3u">⬇️ ดาวน์โหลด Sub</a>
+  </div>
+
+  <h4>🎬 ทดสอบเล่น (พากย์ไทย)</h4>
+  <select id="playSelectTH">
+    <option value="">-- เลือก EP --</option>
+  </select>
+  <h4>🎬 ทดสอบเล่น (Sound Track)</h4>
+  <select id="playSelectSUB">
+    <option value="">-- เลือก EP --</option>
+  </select>
+  <video id="player" controls muted></video>
+</div>
+
+<script>
+const progressArea = document.getElementById('progressArea');
+const resultArea = document.getElementById('resultArea');
+const titleEl = document.getElementById('title');
+const posterEl = document.getElementById('poster');
+const m3uText = document.getElementById('m3uText');
+const playSelectTH = document.getElementById('playSelectTH');
+const playSelectSUB = document.getElementById('playSelectSUB');
+const player = document.getElementById('player');
+
+let fullM3U = '';
+
+function ensureHttps(url) {
+  if (!url) return url;
+  if (url.startsWith('http')) return url;
+  if (url.startsWith('//')) return 'https:' + url;
+  if (url.startsWith('/')) return 'https://kserietv.co' + url;
+  return 'https://' + url;
+}
+
+function filterM3U(type) {
+  const lines = fullM3U.split('\n');
+  const filteredLines = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.startsWith('#EXTM3U')) {
+      filteredLines.push(line);
+    } else if (line.startsWith('#EXTINF')) {
+      if (type === 'all' || line.toLowerCase().includes('(' + type + ')')) {
+        filteredLines.push(line);
+        if (lines[i+1]) filteredLines.push(lines[i+1]);
+      }
+      i++;
+    }
+  }
+  return filteredLines.join('\n');
+}
+
+document.getElementById('urlForm').addEventListener('submit', e => {
+  e.preventDefault();
+  resultArea.style.display = 'none';
+  progressArea.textContent = 'กำลังโหลด...';
+
+  player.pause();
+  player.removeAttribute('src');
+  player.load();
+
+  const url = document.getElementById('urlInput').value.trim();
+  const lang = document.getElementById('langSelect').value;
+
+  const es = new EventSource('https://xtream-fast.serv00.net/kseries/sse.php?url=' + encodeURIComponent(url) + '&lang=' + lang);
+
+  es.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    progressArea.textContent = data.message + ' (' + data.progress + '%)';
+
+    if (data.progress >= 100) {
+      es.close();
+      if (data.data) {
+        const d = data.data;
+        titleEl.textContent = d.title;
+        posterEl.src = ensureHttps(d.poster);
+
+        fullM3U = d.m3u.split('\n').map(line => {
+          if (line && !line.startsWith('#') && !line.startsWith('http')) {
+            return 'https:' + line;
+          }
+          return line;
+        }).join('\n');
+
+        m3uText.value = fullM3U;
+        resultArea.style.display = 'block';
+
+        const blobAll = new Blob([filterM3U('all')], {type: 'application/x-mpegURL'});
+        const blobTH = new Blob([filterM3U('th')], {type: 'application/x-mpegURL'});
+        const blobSub = new Blob([filterM3U('sub')], {type: 'application/x-mpegURL'});
+
+        document.getElementById('dlAll').href = URL.createObjectURL(blobAll);
+        document.getElementById('dlTH').href = URL.createObjectURL(blobTH);
+        document.getElementById('dlSub').href = URL.createObjectURL(blobSub);
+
+        const lines = fullM3U.split('\n');
+        const thUrls = [], subUrls = [];
+        for (let i = 0; i < lines.length; i++) {
+          if (lines[i].startsWith('#EXTINF')) {
+            const url = lines[i+1];
+            if (lines[i].toLowerCase().includes('(th)')) thUrls.push(url);
+            if (lines[i].toLowerCase().includes('(sub)')) subUrls.push(url);
+            i++;
+          }
+        }
+
+        playSelectTH.innerHTML = '<option value="">-- เลือก EP --</option>';
+        thUrls.forEach((url, i) => {
+          const opt = document.createElement('option');
+          opt.value = url;
+          opt.textContent = 'EP ' + (i+1);
+          playSelectTH.appendChild(opt);
+        });
+
+        playSelectSUB.innerHTML = '<option value="">-- เลือก EP --</option>';
+        subUrls.forEach((url, i) => {
+          const opt = document.createElement('option');
+          opt.value = url;
+          opt.textContent = 'EP ' + (i+1);
+          playSelectSUB.appendChild(opt);
+        });
+
+        progressArea.textContent = `✅ สำเร็จ (TH ${thUrls.length} ตอน, SUB ${subUrls.length} ตอน)`;
+
+      } else {
+        progressArea.textContent = 'ข้อผิดพลาด: ' + data.error;
+      }
+    }
+  };
+
+  es.onerror = function() {
+    progressArea.textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
+    es.close();
+  };
+});
+
+function playStream(val) {
+  if (window.hls) {
+    window.hls.destroy();
+    window.hls = null;
+  }
+  if (Hls.isSupported()) {
+    const hls = new Hls();
+    hls.loadSource(val);
+    hls.attachMedia(player);
+    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+      player.play();
+    });
+    window.hls = hls;
+  } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+    player.src = val;
+    player.addEventListener('loadedmetadata', function () {
+      player.play();
+    });
+  } else {
+    alert('เบราว์เซอร์ของคุณไม่รองรับวิดีโอแบบนี้');
+  }
+}
+
+playSelectTH.addEventListener('change', () => {
+  if (playSelectTH.value) playStream(playSelectTH.value);
+});
+playSelectSUB.addEventListener('change', () => {
+  if (playSelectSUB.value) playStream(playSelectSUB.value);
+});
+
+function copyText(type) {
+  const text = filterM3U(type);
+  navigator.clipboard.writeText(text).then(() => alert('คัดลอกแล้ว: ' + type.toUpperCase()));
+}
+</script>
+
+</body>
+</html>
