@@ -1,0 +1,657 @@
+body {
+  background-color: black;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-family: 'poppins', sans-serif;
+}
+
+h1 {
+  color: azure;
+  margin-bottom: 4px;
+  font-weight: 300;
+}
+
+h2 {
+  display: none;
+  visibility: hidden;
+}
+
+iframe * {
+  display: none;
+}
+
+a {
+  text-decoration: inherit;
+  color: azure;
+}
+
+.more {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+
+}
+
+h3 {
+  display: flex;
+  text-align: center;
+  color: azure;
+  font-weight: 300;
+
+}
+
+h4 {
+  display: flex;
+  text-align: center;
+  color: azure;
+  font-weight: 300;
+}
+
+h3 span {
+  flex-grow: 1;
+  background: rgba(0, 0, 0, .7)
+}
+
+h4 span {
+  flex-grow: 1;
+  background: rgba(0, 0, 0, .7)
+}
+
+marquee {
+  direction: left;
+  color: black;
+  font-size: 12px;
+  background: azure;
+  width: 100%;
+}
+
+@media only screen and (min-width: 150px) {
+
+  marquee {
+    font-size: 12px;
+  }
+
+  h1 {
+    font-size: 15px;
+  }
+
+  /*event tanggal dan jam*/
+  h3 {
+    font-size: 11px;
+    margin-top: -30px;
+  }
+
+  h4 {
+    font-size: 11px;
+    margin-top: -11px;
+  }
+
+
+  /* live event */
+  .live_event {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+
+  }
+
+  .live-event_item {
+    scroll-snap-align: center;
+
+  }
+
+  .live-event_image {
+    width: 150px;
+    height: 84px;
+    object-fit: cover;
+  }
+
+  /* sportlist */
+  .sportlist {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .sportlist_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .sportlist_image {
+    width: 120px;
+    height: 68px;
+    object-fit: cover;
+  }
+
+  /* acara favorit */
+  .acaratv {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .acaratv_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .acaratv_image {
+    width: 120px;
+    height: 68px;
+    object-fit: cover;
+  }
+
+  /* TV Category */
+  .tv_category {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    text-align: center;
+
+  }
+
+  .tv-category_item {
+    scroll-snap-align: center;
+    background-color: rgb(32, 32, 32);
+    border-radius: 5px;
+    outline: thick solid rgb(32, 32, 32);
+  }
+
+  .btn {
+    font-size: 17px;
+    white-space: nowrap;
+  }
+
+  /* tv popular */
+  .tv {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .tv_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .tv_image {
+    width: 100px;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* movies */
+  .movies {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .movies_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .movies_image {
+    width: 100px;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* chat button */
+  .trakter {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    white-space: nowrap;
+    gap: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .btn-trakter {
+    background-color: rgb(32, 32, 32);
+    border-radius: 2px;
+    outline: thick solid rgb(32, 32, 32);
+    font-size: 15px;
+    flex-grow: 1;
+  }
+
+  /* radio */
+  .radio {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .radio_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .radio_image {
+    width: 100px;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* movie server */
+  .movies_server {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .movie-server_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .movie-server_image {
+    width: 120px;
+    height: auto;
+    object-fit: cover;
+  }
+
+}
+
+/* Small devices (landscape phones, less than 768px) */
+@media only screen and (min-width: 800px) {
+
+  marquee {
+    font-size: 13px;
+  }
+
+  h1 {
+    font-size: 15px;
+  }
+
+  /*event tanggal dan jam*/
+  h3 {
+    font-size: 11px;
+    margin-top: -30px;
+  }
+
+  h4 {
+    font-size: 11px;
+    margin-top: -11px;
+  }
+
+  /* live event */
+  .live_event {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .live-event_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .live-event_image {
+    width: 170px;
+    height: 96px;
+    object-fit: cover;
+  }
+
+  /* sportlist */
+  .sportlist {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .sportlist_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .sportlist_image {
+    width: 130px;
+    height: 73px;
+    object-fit: cover;
+  }
+
+  /* TV Category */
+  .tv_category {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    text-align: center;
+
+  }
+
+  .tv-category_item {
+    scroll-snap-align: center;
+    background-color: rgb(32, 32, 32);
+    border-radius: 8px;
+    outline: thick solid rgb(32, 32, 32);
+    flex-grow: 1;
+  }
+
+  .btn {
+    font-size: 15px;
+    white-space: nowrap;
+  }
+
+  /* tv popular */
+  .tv {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .tv_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .tv_image {
+    width: 110px;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* movies */
+  .movies {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .movies_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .movies_image {
+    width: 130px;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* chat button */
+  .trakter {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    white-space: nowrap;
+    gap: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .btn-trakter {
+    background-color: rgb(32, 32, 32);
+    border-radius: 2px;
+    outline: thick solid rgb(32, 32, 32);
+    font-size: 13px;
+    flex-grow: 1;
+  }
+
+  /* radio */
+  .radio {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .radio_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .radio_image {
+    width: 140px;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* movie server */
+  .movies_server {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .movie-server_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+    flex-grow: 1;
+  }
+
+  .movie-server_image {
+    width: 120px;
+    height: auto;
+    object-fit: cover;
+  }
+
+}
+
+/* Medium devices (tablets, less than 992px) */
+@media only screen and (min-width: 1300px) {
+  marquee {
+    font-size: 15px;
+  }
+
+  h1 {
+    font-size: 27px;
+  }
+
+  /* live event */
+  .live_event {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .live-event_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .live-event_image {
+    width: 250px;
+    height: 141px;
+    object-fit: cover;
+  }
+
+  /* sportlist */
+  .sportlist {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+  }
+
+  .sportlist_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .sportlist_image {
+    width: 200px;
+    height: 113px;
+    object-fit: cover;
+  }
+
+  /* TV Category */
+  .tv_category {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    text-align: center;
+
+  }
+
+  .tv-category_item {
+    scroll-snap-align: center;
+    background-color: rgb(32, 32, 32);
+    border-radius: 8px;
+    outline: thick solid rgb(32, 32, 32);
+    flex-grow: 1;
+  }
+
+  .btn {
+    font-size: 27px;
+    white-space: nowrap;
+
+  }
+
+  /* tv popular */
+  .tv {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .tv_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+    flex-grow: 1;
+  }
+
+  .tv_image {
+    width: 180px;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* movies */
+  .movies {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .movies_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+  }
+
+  .movies_image {
+    width: 130px;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* chat button */
+  .trakter {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    white-space: nowrap;
+    gap: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .btn-trakter {
+    background-color: rgb(32, 32, 32);
+    border-radius: 2px;
+    outline: thick solid rgb(32, 32, 32);
+    font-size: 13px;
+    flex-grow: 1;
+  }
+
+  /* radio */
+  .radio {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .radio_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+    flex-grow: 1;
+  }
+
+  .radio_image {
+    width: 200px;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* movie server */
+  .movies_server {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .movie-server_item {
+    scroll-snap-align: center;
+    align-items: stretch;
+    flex-grow: 1;
+    background-color: rgb(32, 32, 32);
+    text-align: center;
+  }
+
+  .movie-server_image {
+    width: 200px;
+    height: auto;
+    object-fit: cover;
+  }
+
+}
